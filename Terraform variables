@@ -1,0 +1,112 @@
+##########################################################################################################
+# Terraform variables -  Input, Output                                                           
+##########################################################################################################
+
+Terraform variables are a way to store values that can be reused throughout your Terraform configuration.
+
+For more details you can check official page of Terraform:
+https://developer.hashicorp.com/terraform/language/values 
+
+1.	In terraform configuration file, you can define variable block with its details such as type, default value. For more understanding, please find below variable block; 
+
+variable "ami" {
+        type = string
+        default = "t2.micro"
+}
+
+ami = Variable name
+type = Variable type (string, number, set, list, bool, map etc.)
+default = default value of variable
+
+
+2. We will see some examples for defining variables of different types:
+
+•	string 
+
+variable "instance_type" {
+   description = "Instance type t2.micro"
+   type        = string
+   default     = "t2.micro"
+}
+
+•	number
+
+	variable "instance_type" {
+	   description = "Instance type t2.micro"
+	   type        = string
+	   default     = "t2.micro"
+	}
+
+•	Bool
+	
+	variable "enable_public_ip" {
+	  description = "Enable public IP address"
+	  type        = bool
+	  default     = true
+	}
+  
+  
+•	List
+	
+	variable "user_names" {
+	  description = "IAM usernames"
+	  type        = list(string)
+	  default     = ["user1", "user2", "user3"]
+	}
+
+
+•	Map
+	
+	variable "ami" {
+	        type = map(string)
+	        default = {
+	                "ami1" = "ami-074dc0a6f6c764218"
+	                "ami2" = "ami-07ffb2f4d65357b42"
+	}
+
+
+
+3.	Output values:
+Output variables are useful to extract information about resources that created by terraform. 
+For more details about output values and their uses please refer Terraform official document - https://developer.hashicorp.com/terraform/language/values/outputs 
+
+We will see one example to understand output variable block:
+
+output "instance_public_ip" {
+  description = "Public IP of EC2 instance"
+  value       = aws_instance.web_server.public_ip
+}
+
+
+
+4.	How to pass variables through command line
+We can define our variable block in terraform.tfvars files and then we can pass variables from a tfvars file as command-line arguments using the -var-file flag.
+
+variable "project_id" {
+  type        = string
+  description = "The Project ID"
+}
+
+variable "location" {
+   description = "Region for project"
+   default     = "europe-central2"
+   type        = string
+}
+
+
+
+# You need to supply variable during the terraform plan
+terraform plan -var-file=terraform.tfvars
+ 
+# You need to supply variable during the terraform apply
+terraform apply -var-file=terraform.tfvars 
+
+
+We can also specify multiple variable files by using the -var-file flag multiple times on the command line. For example:
+
+terraform apply -var-file=myvars-1.tfvars -var-file=myvars-2.tfvars
+
+
+
+
+
