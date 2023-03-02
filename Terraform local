@@ -1,0 +1,33 @@
+#####################################################################################################
+# Terraform Locals
+#####################################################################################################
+
+Terraform Locals are named values which can be assigned and used in your code. It mainly serves the purpose of reducing duplication within the Terraform code. When you use Locals in the code, since you are reducing duplication of the same value, you also increase the readability of the code.
+
+
+But what is difference between terraform variables and locals?
+1.	A Local is only accessible within the local module vs a Terraform variable which can be scoped globally.
+2.	a local in Terraform doesn’t change its value once assigned. A variable value can be manipulated via expressions. This makes it easier to assign expression outputs to locals and use that throughout the code instead of using the expression itself at multiple places. 
+
+
+How we can use locals in configuration?
+1.	First, declare the local along and assign a value
+2.	Then, use the local name anywhere in the code where that value is needed
+
+
+variable "bucket_prefix" {
+  type    = string
+  default = "mybucketname"
+}
+
+
+locals {
+  bucket_name = "${var.bucket_prefix}-bucket1"
+}
+ 
+resource "aws_s3_bucket" "my_test_bucket" {
+  bucket = local.bucket_name
+  acl    = "private"
+}
+
+
