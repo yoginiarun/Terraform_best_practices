@@ -1,0 +1,78 @@
+#########################################################################################################
+## Terraform output values
+#########################################################################################################
+
+*     Terraform output values will be really useful when you want to debug your terraform code. Terraform output values can help you to print the attributes reference(arn, instance_state, outpost_arn, public_ip, public_dns etc) on your console.
+
+
+resource "aws_instance" "instance" {
+        ami = "ami-074dc0a6f6c764218"
+        instance_type = "t2.micro"
+        tags = {
+                Name = "test"
+}
+}
+
+output "ec2_info" {
+        value = aws_instance.instance.public_ip
+}
+
+
+aws_instance : Resource 
+instance : Resource name
+public_ip : AWS attribute
+
+
+
+*     In actual production environment, we are not defining output values in main.tf file. The recommended way is to create a separate output.tf specially of the terraform output values, so that all the output values can be stored there.
+
+cat .\output.tf
+output "ec2_info" {
+        value = aws_instance.instance.public_ip
+        sensitive = true
+}
+
+
+
+*     How to prevent printing sensitive info on the console?
+In some cases, you don’t want to print all values on console.
+So to prevent from printing sensitive values on the console you need to set sensitive = true.
+
+output "ec2_info" {
+        value = aws_instance.instance.public_ip
+        sensitive = true
+}
+
+(Console output)
+Plan: 1 to add, 0 to change, 0 to destroy.
+Changes to Outputs:
+  + ec2_info = (sensitive value)
+
+
+
+
+*     How do you output multiple values in Terraform?
+
+1.	We can output multiple values by defining multiple output blocks in your configuration. Each output block should have a unique name and a corresponding value.
+
+output "public_IP" {
+        value = aws_instance.instance.public_ip
+        }
+
+output "instance_type" {
+        value = aws_instance.instance.instance_type
+       }
+
+
+2.	We can also output multiple values in a single output block by using the map function.
+
+output "instance_info" {
+  value = {
+    public_ip  = aws_instance.instance.public_ip
+    instance_type = aws_instance.instance.instance_type
+  }
+} 
+
+
+
+
