@@ -34,6 +34,8 @@ resource "aws_iam_user" "users" {
 The for_each is a little special in terraforming and you can not use it on any collection variable.  
 It can only be used on set(string) or map(string). The reason why for_each does not work on list(string) is because a list can contain duplicate values but if you are using set(string) or map(string) then it does not support duplicate values.
 
+1. set(string)
+
 variable "aws_IAM_user" {
     type = set(string)
     default = [ "user1", "user2", "user3" ]
@@ -46,6 +48,8 @@ resource "aws_iam_user" "users" {
 }
 
 After applying terraform configuration, it will create 3 IAM users.
+
+Output:
 
   # aws_iam_user.users["user1"] will be created
   + resource "aws_iam_user" "users" {
@@ -79,3 +83,63 @@ After applying terraform configuration, it will create 3 IAM users.
       + tags_all      = (known after apply)
       + unique_id     = (known after apply)
     }
+
+
+2. map(string)
+
+
+variable "aws_IAM_user" {
+    type = map(string)
+    default = {
+        "a" = "user1"
+        "b" = "user2"
+        "c" = "user3"
+        "a" = "user1"        # duplicate value
+    }
+    }
+
+resource "aws_iam_user" "users" {
+        for_each = var.aws_IAM_user
+        name = each.value
+        }
+        
+
+
+Output:
+
+ Terraform will perform the following actions:
+
+  # aws_iam_user.users["a"] will be created
+  + resource "aws_iam_user" "users" {
+      + arn           = (known after apply)
+      + force_destroy = false
+      + id            = (known after apply)
+      + name          = "user1"
+      + path          = "/"
+      + tags_all      = (known after apply)
+      + unique_id     = (known after apply)
+    }
+
+  # aws_iam_user.users["b"] will be created
+  + resource "aws_iam_user" "users" {
+      + arn           = (known after apply)
+      + force_destroy = false
+      + id            = (known after apply)
+      + name          = "user2"
+      + path          = "/"
+      + tags_all      = (known after apply)
+      + unique_id     = (known after apply)
+    }
+
+  # aws_iam_user.users["c"] will be created
+  + resource "aws_iam_user" "users" {
+      + arn           = (known after apply)
+      + force_destroy = false
+      + id            = (known after apply)
+      + name          = "user3"
+      + path          = "/"
+      + tags_all      = (known after apply)
+      + unique_id     = (known after apply)
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
